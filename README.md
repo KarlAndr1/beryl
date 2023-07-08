@@ -18,22 +18,28 @@ One exception to this is if beryl_clear is called and all interpreter-related va
 ## Examples
 
 Hello world:
-	print "Hello world!"
+```
+print "Hello world!"
+```
 
 fib.beryl:
-	let fib = function n do
-		if (n == 0) or? (n == 1) do
-			n
-		end, else do
-			(fib n - 1) + (fib n - 2)
-		end
+```
+let fib = function n do
+	if (n == 0) or? (n == 1) do
+		n
+	end, else do
+		(fib n - 1) + (fib n - 2)
 	end
+end
+```
 Note that 'if' is a function, just like 'print' or 'fib'.
 
 lool.beryl:
-	for 1 11 with i do
-		print i
-	end
+```
+for 1 11 with i do
+	print i
+end
+```
 This prints the numbers 1, 2, ..., 10
 
 More examples can be found in ./examples and ./test_scripts
