@@ -34,13 +34,13 @@ end
 ```
 Note that 'if' is a function, just like 'print' or 'fib'.
 
-lool.beryl:
+loop.beryl:
 ```
 for 1 11 with i do
 	print i
 end
 ```
-This prints the numbers 1, 2, ..., 10
+This prints the numbers 1, 2, ..., 10. for is also a function defined in the standard library.
 
 More examples can be found in ./examples and ./test_scripts
 
