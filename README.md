@@ -56,7 +56,7 @@ To use the library, include the lib.ar file when compiling, and #include the int
 If the automated build fails, compiling main.c, lexer.c, interpreter.c and all source files in the libs directory should give a working
 standalone build with a REPL.
 ```
-	cc src/main.c src/lexer.c src/interpreter.c src/libs/core_lib.c src/libs/common_lib.c src/libs/io_lib.c src/libs/datastructures_lib.c src/libs/debug_lib.c src/libs/modules_lib.c
+cc src/main.c src/lexer.c src/interpreter.c src/libs/core_lib.c src/libs/common_lib.c src/libs/io_lib.c src/libs/datastructures_lib.c src/libs/debug_lib.c src/libs/modules_lib.c
 ```
 
 See the documentation (docs/USING.md) for language usage, syntax and semantics.
