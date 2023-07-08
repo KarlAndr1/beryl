@@ -1,0 +1,20 @@
+let x = 10
+let y = 25
+let z = x + y
+
+assert x == 10
+assert y == 25
+assert z == 35
+
+let plus+ = function x y do
+	x + y
+end
+
+let fn = function x y do 
+	assert (x plus+ y) == (x + y)
+	x + y
+end
+
+z = fn 20 80
+assert x == 10
+assert z == 100

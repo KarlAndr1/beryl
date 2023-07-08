@@ -1,0 +1,13 @@
+(table
+	"inc" function x do
+		x + 1
+	end
+	
+	"dec" function x do
+		x - 1
+	end
+	
+	"sq" function x do
+		x * x
+	end
+)

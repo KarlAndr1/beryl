@@ -1,0 +1,18 @@
+let sq = function x do x * x end
+
+assert (sq 10) == 100
+assert (sq 5) == 25
+assert (sq 9) == 81
+
+# Any variable/function starting or ending with +, -, *, /, ?, ^, =, <, > etc can be used as a binary operator
+let ^ = function x y do 
+	let res = 1
+	for 0 y with i do
+		res = res * x
+	end
+	res
+end
+
+assert (2 ^ 8) == 256
+assert (3 ^ 2) == 9
+assert (21 ^ 9) == 794280046581

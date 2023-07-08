@@ -1,0 +1,13 @@
+
+let sq = function x do
+	x * x
+end
+
+let negate = function x do
+	- x
+end
+
+(table
+	"sq" sq
+	"negate" negate
+)

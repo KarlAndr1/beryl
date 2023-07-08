@@ -1,0 +1,33 @@
+let i = 10
+
+let cond = false
+
+(switch i
+	0 do
+		cond = false
+	end
+	
+	5 do
+		cond = false
+	end
+	
+	do
+		cond = true
+	end
+)
+
+assert cond
+
+let res = (switch i
+	0 do
+		23
+	end
+	20 do
+		21
+	end
+	10 do
+		42
+	end
+)
+
+assert res == 42

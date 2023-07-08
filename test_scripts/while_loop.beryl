@@ -1,0 +1,24 @@
+
+let while = function cond body do
+	let res = null
+	if (invoke cond) do
+		loop do
+			res = invoke body
+			if (invoke cond) do 
+				null 
+			end, else do 
+				1 
+			end
+		end
+	end
+	res
+end
+
+let x = 0
+let res = "Hello"
+while do (not x == 10) end do
+	x = x + 1
+	assert res == "Hello"
+end
+
+assert x == 10

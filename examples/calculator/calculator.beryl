@@ -1,0 +1,27 @@
+loop do
+	let n1 = parse-int (readline "Enter first number:")
+	let n2 = parse-int (readline "Enter second number:")
+	
+	let calc-type = readline "What kind of calculation would you like to do? (+ - * /)"
+	
+	let res = null
+	if calc-type == "+" do
+		res = n1 + n2
+	end, elseif calc-type == "-" do
+		res = n1 - n2
+	end, elseif calc-type == "*" do
+		res = n1 * n2
+	end, elseif calc-type == "/" do
+		res = n1 / n2
+	end
+	
+	if (null? res) do
+		"Not a valid option"
+	end, else do
+		print "The result is:" res
+	end
+	
+	let do-again = readline "Again? (y/n)"
+	
+	(do-again == "y") or? (do-again == "Y")
+end
