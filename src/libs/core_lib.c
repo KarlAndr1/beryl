@@ -359,6 +359,13 @@ static i_val return_callback(const i_val *args, size_t n_args) {
 	}
 }
 
+static i_val new_tag_callback(const i_val *args, size_t n_args) {
+	i_val new_tag = beryl_new_tag();
+	if(BERYL_TYPEOF(new_tag) == TYPE_NULL)
+		return STATIC_ERR("Out of unique tags");
+	return new_tag;
+}
+
 LIB_FNS(fns) = {
 	FN("if", if_callback, -3),
 	FN("for", for_callback, -4),
@@ -390,7 +397,9 @@ LIB_FNS(fns) = {
 	FN("sizeof", sizeof_callback, 1),
 	
 	FN("invoke", invoke_callback, 1),
-	FN("return", return_callback, -1)
+	FN("new", invoke_callback, 1),
+	FN("return", return_callback, -1),
+	FN("tag", new_tag_callback, 0)
 };
 
 void core_lib_load() {

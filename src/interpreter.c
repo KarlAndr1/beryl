@@ -57,6 +57,14 @@ void beryl_load_standard_libs() {
 	#endif
 }
 
+i_val beryl_new_tag() {
+	static i_int tag_counter = 0;
+
+	if(tag_counter == I_INT_MAX)
+		return I_NULL;
+	return (i_val) { .type = TYPE_TAG, .managed = false, .val = { .int_v = tag_counter++ } };
+}
+
 // Getters
 
 const char *i_val_get_raw_str(const i_val *val) {
@@ -73,6 +81,7 @@ const char *i_val_get_raw_str(const i_val *val) {
 #define GETTER(ret_type, name, req_type, property) ret_type name(i_val val) { assert(val.type == req_type); return val.val.property; }
 
 GETTER(i_int, i_val_get_int, TYPE_INT, int_v)
+GETTER(i_int, i_val_get_tag, TYPE_TAG, int_v)
 GETTER(i_float, i_val_get_float, TYPE_FLOAT, float_v)
 GETTER(i_int, i_val_get_bool, TYPE_BOOL, int_v)
 
@@ -404,11 +413,10 @@ bool i_val_eq(i_val a, i_val b) {
 	if(a.type != b.type)
 		return false;
 	switch(a.type) {
-		case TYPE_INT:
-		case TYPE_BOOL:
-			return i_val_get_int(a) == i_val_get_int(b);
-		case TYPE_FLOAT:
-			return i_val_get_float(a) == i_val_get_float(b);
+		case TYPE_INT: return i_val_get_int(a) == i_val_get_int(b);
+		case TYPE_BOOL: return i_val_get_bool(a) == i_val_get_bool(b);
+		case TYPE_TAG: return i_val_get_tag(a) == i_val_get_tag(b);
+		case TYPE_FLOAT: return i_val_get_float(a) == i_val_get_float(b);
 
 		case TYPE_STR: {
 			i_size alen = i_val_get_len(a);

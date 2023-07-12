@@ -6,101 +6,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*
-typedef struct match_result {
-	const char *from, *to;
-} match_result;
 
-static bool is_alpha(char c) {
-	return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
-}
-
-static bool is_digit(char c) {
-	return c >= '0' && c <= '9';
-}
-
-static const char* strmatch(const char *str, const char *str_end, const char *pattern, const char *pattern_end) {
-	while(pattern != pattern_end) {
-		switch(*pattern) {
-			
-			case '*':
-				if(str == str_end)
-					return NULL;
-				str++;
-				break;
-			
-			default:
-				if(str == str_end || *str != *pattern)
-					return NULL;
-				str++;
-				break;
-		}
-		pattern++;
-	}
-	return str;
-}
-
-static struct match_result strmatchf(const char *str, size_t str_len, const char *pattern, size_t pattern_len) {
-	for(size_t i = 0; i < str_len; i++) {
-		const char *res = strmatch(str + i, str + str_len, pattern, pattern + pattern_len);
-		if(res != NULL)
-			(match_result) { str + i, res };
-	}
-	return (match_result) { NULL, NULL };
-}
-
-static i_val match_callback(const i_val *args, size_t n_args) {
-	if(BERYL_TYPEOF(args[0]) != TYPE_STR) {
-		beryl_blame_arg(args[0]);
-		return STATIC_ERR("Can only match strings");
-	}
-	if(BERYL_TYPEOF(args[¡]) != TYPE_STR) {
-		beryl_blame_arg(args[1]);
-		return STATIC_ERR("Expected string as second argument");
-	}
-	
-	i_size strlen = i_val_get_len(args[0]);
-	const char *str = i_val_get_raw_str(&args[0]);
-	
-	i_size plen = i_val_get_len(args[1]);
-	const char *p = i_val_get_raw_str(&args[1]);
-	
-	i_size i = 0;
-	i_val res = I_NULL;
-	for(i = 0; i < strlen; i++) {
-		if(plen > strlen - i)
-			return res;
-		for(i_size j = 0; j < plen; j++) {
-			
-		}
-	}
-} */
 
 #include "../lexer.h"
-
-/*
-static i_val tokenize_callback(const i_val *args, size_t n_args) {
-	if(BERYL_TYPEOF(args[0]) != TYPE_STR) {
-		beryl_blame_arg(args[0]);
-		return STATIC_ERR("Can only tokenize strings");
-	}
-	
-	const char *str = i_val_get_raw_str(args[0]);
-	i_size len = i_val_get_len(args[0]);
-	
-	struct lex_state lex;
-	lex_state_init(&lex, str, len);
-	
-	i_size len = 0, cap = 8;
-	i_val *buff = calloc(sizeof(i_val) * cap);
-	if(buff == 0)
-		return STATIC_ERR("Out of memory");
-	
-	while(!lex_accept(&lex, TOK_EOF)) {
-		struct lex_token tok = lex_pop(&lex);
-		if(
-	}
-} */
 
 static i_val tok_to_i_val(struct lex_token tok) {
 	switch(tok.type) {
@@ -367,13 +275,112 @@ static i_val replace_callback(const i_val *args, size_t n_args) {
 	}
 }
 
+static int i_val_array_push(i_val *array, i_val val) {
+	assert(array != NULL);
+	assert(BERYL_TYPEOF(*array) == TYPE_ARRAY);
+
+	i_size len = i_val_get_len(*array);
+	i_val res;
+	
+	if(!array->managed) {
+		i_size new_cap = (len * 3) / 2 + 1;
+		if(new_cap <= len)
+			return 1;
+		res = i_val_managed_array(i_val_get_raw_array(*array), len, new_cap);
+	} else {
+		assert(beryl_get_references(*array) == 1);
+		i_size cap = i_val_get_cap(*array);
+		if(len < cap)
+			res = beryl_retain(*array);
+		else {
+			assert(len == cap);
+			i_size new_cap = (cap * 3) / 2 + 1;
+			if(new_cap <= cap)
+				return 1;
+			res = i_val_managed_array(i_val_get_raw_array(*array), len, new_cap);
+		}
+	}
+	
+	if(BERYL_TYPEOF(res) == TYPE_NULL)
+		return 1;
+	
+	assert(i_val_get_cap(res) > i_val_get_len(res));
+	
+	i_val *items = (i_val *) i_val_get_raw_array(res);
+	items[res.len++] = beryl_retain(val);
+	beryl_release(*array);
+	*array = res;
+	return 0;
+}
+
+static int push_substr(i_val *array, const char *substr_start, const char *substr_end) {
+	i_val substr = i_val_managed_str(substr_start, substr_end - substr_start);
+	if(BERYL_TYPEOF(substr) == TYPE_NULL)
+		return 0;
+	int err = i_val_array_push(array, substr);
+	beryl_release(substr);
+	return err;
+}
+
+static i_val split_callback(const i_val *args, size_t n_args) {
+	for(size_t i = 0; i < n_args; i++) {
+		if(BERYL_TYPEOF(args[i]) != TYPE_STR) {
+			beryl_blame_arg(args[i]);
+			return STATIC_ERR("All arguments of split must be strings");
+		}
+	}
+	i_val res_array = i_val_static_array(NULL, 0);
+	const char *str = i_val_get_raw_str(&args[0]);
+	const char *str_end = str + i_val_get_len(args[0]);
+	
+	const char *substr_start = NULL;
+	for(const char *c = str; c < str_end; c++) {
+		bool match = false;
+		i_size match_len;
+		for(size_t i = 1; i < n_args; i++) {
+			i_size len = i_val_get_len(args[i]);
+			if(len == 0)
+				continue; 
+			if(str_match(c, str_end, i_val_get_raw_str(&args[i]), len)) {
+				match = true;
+				match_len = len;
+				break;
+			}
+		}
+		if(match) {
+			if(substr_start != NULL) {
+				int err = push_substr(&res_array, substr_start, c);
+				if(err) {
+					beryl_release(res_array);
+					return STATIC_ERR("Out of memory");
+				}
+			}
+			assert(match_len > 0);
+			c += match_len - 1;
+			substr_start = NULL;
+		} else if(substr_start == NULL) {
+			substr_start = c;
+		}
+	}
+	
+	if(substr_start != NULL) {
+		int err = push_substr(&res_array, substr_start, str_end);
+		if(err) {
+			beryl_release(res_array);
+			return STATIC_ERR("Out of memory");
+		}
+	}
+	
+	return res_array;
+}
+
 LIB_FNS(fns) = {
-	//FN("match", match_callback, 3)
 	FN("lex", tokenize_callback, 2),
 	FN("endswith?", endswith_callback, 2),
 	FN("find", find_callback, 2),
 	FN("substring", substring_callback, 3),
-	FN("replace", replace_callback, 3)
+	FN("replace", replace_callback, 3),
+	FN("split", split_callback, -3)
 };
 
 void string_lib_load() {
@@ -381,8 +388,7 @@ void string_lib_load() {
 	
 	CONSTANT("newline", I_STATIC_STR("\n"));
 	CONSTANT("tab", I_STATIC_STR("\t"));
-	//CONSTANT(
-	
+
 	DEF_FN("contains?", str substr, 
 		not (null? (find str substr))
 	);
