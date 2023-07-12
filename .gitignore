@@ -1,0 +1,5 @@
+*.out
+*.pyc
+*.o
+*.ar
+out/*.h
