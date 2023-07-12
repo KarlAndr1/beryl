@@ -43,6 +43,7 @@ enum {
 	//TYPE_TABLE,
 	TYPE_FN,
 	TYPE_EXT_FN,
+	TYPE_TAG,
 	TYPE_ERR,
 	TYPE_MARKER_RETURN,
 	BERYL_N_STATIC_TYPES
@@ -171,6 +172,7 @@ int i_val_cmp(struct i_val a, struct i_val b);
 const char *i_val_get_raw_str(const struct i_val *val);	// Note that the lifetime of the returned string may only be as long as the lifetime of the 
 														// provided pointer, even if a copy of the value is retained.
 i_int i_val_get_int(struct i_val val);
+i_int i_val_get_tag(struct i_val val);
 i_int i_val_get_bool(struct i_val val);
 i_float i_val_get_float(struct i_val val);
 const struct i_val *i_val_get_raw_array(struct i_val val);
@@ -190,6 +192,8 @@ struct i_val i_val_bool(i_int i);
 struct i_val i_val_err(struct i_val from_str);
 struct i_val i_val_ext_fn(struct i_ext_fn *fn);
 struct i_val i_val_fn(const char *src, i_size len);
+
+struct i_val beryl_new_tag();
 // ------------------------------------------
 
 #define STATIC_ERR(msg) i_val_err(i_val_static_str(msg, sizeof(msg) - 1))

@@ -204,6 +204,7 @@ int main(int argc, const char **argv) {
 	else if(argc == 2) {
 		struct i_val res = run_script(argv[1], true);
 		print_err(res);
+		beryl_release(res);
 	} else {
 		run_commands(argc, argv);
 	}

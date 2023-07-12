@@ -450,4 +450,24 @@ void common_lib_load() {
 	DEF_FN("empty?", x,
 		(sizeof x) ~= 0
 	);
+	
+	DEF_FN("hold", msg,
+		print "Breakpoint" msg \n
+		loop do \n
+			let input = readline ">" \n
+			if input == "done" do \n
+				false \n
+			end, else do \n
+				try do \n
+					let res = eval input \n
+					if (not (null? res)) do \n
+						print res \n
+					end \n
+				end, catch with x do \n
+					print "Error:" x \n				
+				end \n
+				true \n
+			end \n
+		end \n
+	);
 }

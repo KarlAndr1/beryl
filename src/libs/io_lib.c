@@ -54,6 +54,10 @@ void iolib_print_i_val(FILE *f, struct i_val val) {
 			putc(')', f);
 		} break;
 		
+		case TYPE_TAG: {
+			fputs("Tag", f);
+		} break;
+		
 		default: {
 			ti_interface_callback print_callback = beryl_interface_val(val, TI_PRINT);
 			if(print_callback == NULL)

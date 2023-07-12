@@ -1,0 +1,24 @@
+
+let hold = function msg do
+	print msg
+	loop do
+		let input = readline ">"
+		if input == "done" do
+			false
+		end, else do
+			let res = try do 
+				eval input
+			end, catch with e do 
+				"Error, " cat+ e 
+			end
+			if (not (null? res)) do
+				print res
+			end
+			true
+		end
+	end
+end
+
+(table
+	"hold" hold
+)
