@@ -1,7 +1,0 @@
-function f ... do
-	try do
-		apply varargs f
-	end, catch with e do
-		null
-	end
-end

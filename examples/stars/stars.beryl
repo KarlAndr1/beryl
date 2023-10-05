@@ -1,8 +1,0 @@
-let n-stars = parse-int (readline "How many stars do you want? ")
-
-let stars = ""
-for 0 n-stars with i do
-	stars = stars cat+ "*"
-end
-
-print stars
