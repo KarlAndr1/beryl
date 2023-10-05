@@ -1,0 +1,6 @@
+#!/usr/bin/env berylscript
+
+let line = invoke input
+print line
+
+print-exactly "Other: " quote (invoke input) quote newline

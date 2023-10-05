@@ -1,0 +1,24 @@
+let src = (cat: 
+	"function x do "
+	"x * 2"
+	" end"
+)
+
+assert (refcount src) == 2
+
+let fn = eval src
+assert (refcount src) == 3
+src = null
+
+assert (fn 20) == 40
+
+let src2 = cat: quote "foo" quote
+assert (refcount src2) == max-refcount
+
+let str = eval src2
+
+assert (refcount src2) == max-refcount
+
+src2 = null
+
+assert str == "foo"

@@ -1,0 +1,14 @@
+let dsl = function f do
+	let global TO = new tag
+	let global CONCATENATE = function x y z do
+		assert y == TO "Expected 'TO'"
+		x cat: z
+	end
+	invoke f
+end
+
+let str = dsl do
+	CONCATENATE "foo" TO "bar"
+end
+
+assert str == "foobar"

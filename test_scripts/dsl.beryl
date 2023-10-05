@@ -1,0 +1,17 @@
+
+let dsl = function f do
+	let counter = 0
+	let global increment = function x do
+		counter += x
+	end
+	invoke f
+	counter
+end
+
+let res = dsl do
+	let counter = 100 # This 'let' should have no affect, since the increment function will ignore variables not declared in the dsl scope
+	increment 10
+	increment 20
+end
+
+assert res == 30

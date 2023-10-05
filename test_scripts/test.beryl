@@ -1,0 +1,7 @@
+let x = 20
+
+assert x == 20
+
+if x == 15 do
+	assert false
+end

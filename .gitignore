@@ -1,0 +1,12 @@
+*.pyc
+*.out
+*.ar
+*.o
+*.so.beryl
+beryl
+beryl
+*.beryldl
+*.exe
+*.dll
+*.js
+*.wasm

@@ -1,0 +1,22 @@
+let deferred = function f do
+	let defs = new array
+	let global defer = function f ... args do
+		defs push= (array f args)
+	end
+	invoke f
+	for-in defs with x do
+		apply (x 0) (x 1) # Each array entry is a function (x 0) and an array of arguments (x 1)
+	end
+	null
+end
+
+let val = 20
+
+deferred do
+	defer do
+		val = 30
+	end
+	let val = 25
+end
+
+assert val == 30

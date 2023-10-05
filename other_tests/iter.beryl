@@ -1,0 +1,34 @@
+#!/usr/bin/env berylscript
+
+let some-array = array 0 1 4 9 16 25
+
+let some-table = (table 
+	0 0 
+	1 1 
+	2 4
+	3 9
+	4 16
+	5 25
+)
+
+let fn = function index do
+	if index =<= 5 do
+		index * index
+	end else do
+		null
+	end
+end
+
+for-in some-array with x do
+	print x
+end
+
+for-in some-table with x do
+	print x
+end
+
+for-in fn with x do
+	print x
+end
+
+

@@ -1,0 +1,27 @@
+#!/usr/bin/env beryl
+require-version 0
+
+let files = (array
+	"src/beryl.h"
+	"src/lexer.h"
+	"src/libs/libs.h"
+	"src/io.h"
+	"src/utils.h"
+	"src/io.c"
+	"src/lexer.c"
+	"src/beryl.c"
+	"src/main.c"
+	"src/libs/core_lib.c"
+	"src/libs/unix_lib.c"
+	"src/libs/io_lib.c"
+	"src/libs/debug_lib.c"
+)
+
+let res = ""
+for-in files with f do
+	res cat= (read f)
+end
+
+res str-replace= (cat "#include " quote) "//"
+
+write "./unity-builds/beryl.c" res

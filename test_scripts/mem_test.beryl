@@ -1,0 +1,30 @@
+
+let f = function x do
+	refcount x
+end
+
+let a = array 1 2 3
+assert (f a) == 3
+
+let b = array 1 2 3
+b push= 4
+b push= 5
+
+let o = (struct
+	:method function arg do
+		refcount self
+	end
+	
+	:smethod function arg do
+		self refcount= 
+	end
+)
+
+assert (o :method null) == 3
+assert (o :smethod null) == 2
+assert (o :smethod (o = null)) == 1
+
+let x = array 1 2 3
+let p = ptrof x
+x map= with x do x * 2 end
+assert (ptrof x) == p

@@ -1,0 +1,4 @@
+let s = 0
+for 0 1000'000 with i do
+	s += i
+end

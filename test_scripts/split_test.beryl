@@ -1,0 +1,7 @@
+let a = split "foobar123 chartar456 foo789bar" " "
+
+assert (sizeof a) == 3
+
+assert (a 0) == "foobar123"
+assert (a 1) == "chartar456"
+assert (a 2) == "foo789bar"

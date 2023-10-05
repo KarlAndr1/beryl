@@ -1,0 +1,12 @@
+let ok = new tag
+
+
+let res = try do
+	eval "function ... do end" # Should error because a name must follow 'variadic'
+end else ok
+assert res == ok
+
+res = try do
+	eval "function do x y ... z w do end" # Should error because the variadic argument (z) must be the last argument
+end else ok
+assert res == ok

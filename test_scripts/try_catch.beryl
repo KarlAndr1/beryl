@@ -1,0 +1,39 @@
+let x = 0
+let msg = null
+
+try do
+	if x == 0 do
+		error "Unexpected value for x" x
+	end
+	x = 2
+end catch with err do
+	msg = err
+end
+
+assert x == 0
+assert msg == "Unexpected value for x"
+
+let res = try do 
+	if x == 1 do
+		error "Oh no!"
+	end
+	x = 20
+	"foo"
+end catch with err do
+	"bar"
+end
+
+assert res == "foo"
+assert x == 20
+
+let res2 = try do
+	if x == 10 do
+		print "Hello"
+	end elseif x == 20 do
+		error "Oh no! v.2"
+	end
+	x = 42
+end else "Some default value"
+
+assert x == 20
+assert res2 == "Some default value"

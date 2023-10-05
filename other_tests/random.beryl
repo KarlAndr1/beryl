@@ -1,0 +1,3 @@
+for 0 1000 with i do
+	print (round (new random) * 100)
+end

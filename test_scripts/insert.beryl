@@ -1,0 +1,4 @@
+let t = table "foo" 1 "bar" 2
+let t2 = insert t "char" 3
+
+let t3 = insert (insert t2 "tar" 4) "foo2" 5

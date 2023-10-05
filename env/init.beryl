@@ -1,0 +1,119 @@
+require-version "0"
+
+let loaded-scripts = new table
+
+let load-resource = function path do
+	if path endswith? ".beryl" do # .beryl files get evaluated
+		eval (read path)
+	end elseif path endswith? ".beryldl" do # .beryldl files get loaded as dynamic libs
+		load-dl path
+	end else do # All other files are simply read as text files
+		read path
+	end
+end
+
+let contains? = function str substr do
+	(str find: substr) =/= null
+end
+
+let require = function path do
+	path str-replace= "~" (cat (getenv "BERYL_SCRIPT_HOME") path-separator "libs")
+	if (not path beginswith? path-separator) do
+		path = cat script-dir path-separator path
+	end
+
+	if path in? loaded-scripts do
+		loaded-scripts path
+	end else do
+		let global script-path = path
+		
+		# We need to get the directory portion of the path ie foo/bar from foo/bar/char. This path should always contain at least one /
+		let sep-index = find-right path path-separator
+		assert sep-index =/= null
+		
+		let global script-dir = substring path 0 sep-index
+		let script-file-name = substring path sep-index + 1 (sizeof path)
+
+		if (not script-file-name contains? ".") do
+			let icode-path = path cat: ".beryl"
+			let ncode-path = path cat: ".beryldl"
+			if (file-exists? icode-path) do
+				script-path = icode-path
+			end elseif (file-exists? ncode-path) do
+				script-path = ncode-path
+			end
+		end
+		
+		let res = load-resource script-path
+		loaded-scripts insert= path res
+		res
+	end
+end
+
+let hold = function msg cond do
+	if cond do
+		printf "Holdpoint, %0%1" msg newline
+		loop do
+			let in = input ">"
+			if in =/= "" do
+				print (eval in catch-log null)
+				true
+			end else do
+				false
+			end
+		end
+	end
+end
+
+let docs = function name do
+	try do
+		let path = cat (getenv "BERYL_SCRIPT_HOME") path-separator "docs" path-separator name ".bdoc"
+		cat "----------------" newline (strip (read path)) newline "----------------"
+	end else "No documentation found"
+end
+
+
+if (sizeof argv) == 0 do # Prompt
+	let continue = true
+	let global quit = function do
+		continue = false
+		null
+	end
+	
+	let global script-path = "prompt.beryl"
+	let global script-dir = "."
+	
+	print "Beryl" beryl-version
+	print "Type `invoke quit` or nothing to quit"
+	loop do
+		let in = input ">"
+		if in == "" do
+			continue = false
+		end
+		
+		let res = eval in catch-log with x do end
+		if res =/= null do
+			print res
+		end
+		continue
+	end
+end else do # Run script
+	let global script-path = argv 0 # Set up script-path and script-dir
+	let global script-dir = null
+
+	let sep-index = script-path find-right: path-separator
+	if sep-index == null do # If the script executed is given by a relative path containing no / then it means its in the current directory, i.e '.'
+		script-dir = "." 
+	end else do
+		script-dir = substring script-path 0 sep-index
+	end
+	
+	let global argv = slice argv 1 (sizeof argv)
+	
+	let ret-code = 0
+	eval (read script-path) catch-log with err do
+		ret-code = 1
+	end
+	
+	ret-code
+end

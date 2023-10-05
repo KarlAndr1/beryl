@@ -1,0 +1,8 @@
+
+
+export LINK_FLAGS += ../../berylscript.dll
+
+.PHONY: $(dyn_libs)
+$(dyn_libs):
+	$(MAKE) -C $@
+

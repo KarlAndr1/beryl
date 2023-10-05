@@ -1,0 +1,19 @@
+
+let obj = (table
+	"x" 10
+	
+	"plus" with x do
+		(self "x") + x
+	end
+	
+	"minus" with x do
+		(self "x") - x
+	end
+)
+
+let x = obj "plus" 5
+assert x == 15
+
+let y = obj "minus" 10
+assert y == 0
+

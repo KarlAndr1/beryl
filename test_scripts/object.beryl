@@ -1,0 +1,21 @@
+let object = (table
+	:x 20
+	
+	:printXAnd function and do
+		print (self :x) and
+	end
+	
+	:add function x do
+		replace self :x (self :x) + x
+	end
+)
+
+assert (object :x) == 20
+#object :printXAnd "foo"
+
+let otherObj = object :add 20
+
+assert (otherObj :x) == 40
+#otherObj .printXAnd "bar"
+
+

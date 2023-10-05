@@ -1,0 +1,48 @@
+
+let res = map (array 1 2 3) with x do x * x end
+assert res == (array 1 4 9)
+
+let a1 = array (array 4 2 3) (array 1 2 3) (array 99 200 100 21)
+let r1 = map a1 sort
+assert r1 == (array (array 2 3 4) (array 1 2 3) (array 21 99 100 200))
+
+let a2 = array (array 4 2 3) (array "b" "a" "c") (array (array 3 2) (array 3 3) (array 1 2))
+let r2 = map a2 sort
+assert r2 == (array (array 2 3 4) (array "a" "b" "c") (array (array 1 2) (array 3 2) (array 3 3)))
+
+let a3 = array (array 2 4 3) (array (array 2 3) (array 4 3) (array "foo" 1))
+let r3 = try do
+	map a3 sort
+end else "ok"
+assert r3 == "ok"
+
+
+let a4 = array (array 4 3) (array 9 2) (array 1 2)
+invoke do
+	let p1 = ptrof a4
+	let p2 = ptrof (a4 0)
+	a4 map= sort
+	let p3 = ptrof a4
+	let p4 = ptrof (a4 0)
+	
+	assert p3 == p1
+	assert p4 == p2
+end
+
+assert a4 == (array (array 3 4) (array 2 9) (array 1 2))
+
+let a5 = array (array 4 3) (array 9 2) (array 1 2)
+invoke do
+	let copy = a5
+	let p1 = ptrof a5
+	let p2 = ptrof (a5 0)
+	a5 map= sort
+	let p3 = ptrof a5
+	let p4 = ptrof (a5 0)
+	
+	assert p3 =/= p1
+	assert p4 =/= p2
+	
+	assert copy == (array (array 4 3) (array 9 2) (array 1 2))
+end
+assert a5 == (array (array 3 4) (array 2 9) (array 1 2))

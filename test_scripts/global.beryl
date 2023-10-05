@@ -1,0 +1,27 @@
+
+let caller1 = function f do
+	let x = 20
+	invoke f
+end
+
+let caller2 = function f do
+	let global x = 20
+	invoke f
+end
+
+let f = function do
+	let x = 10
+	let f1 = function do
+		assert x == 10
+	end
+	let f2 = function do
+		assert x == 20
+	end
+	
+	caller1 f1
+	caller2 f2
+	
+	assert x == 10
+end
+
+invoke f

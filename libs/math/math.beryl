@@ -1,0 +1,19 @@
+(table
+
+	:abs function x do
+		if x < 0 do
+			- x
+		end else do
+			x
+		end
+	end
+
+	:sum function nums do
+		apply (+) nums
+	end
+	
+	:product function nums do
+		appy (*) nums
+	end
+	
+) union: (require "math.beryldl")

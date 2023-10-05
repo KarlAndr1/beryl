@@ -1,0 +1,20 @@
+let x = 20
+
+let a = function do
+	x = x + 1
+end
+
+let b = function do
+	let x = 25
+	invoke a
+	assert x == 25
+end
+
+let c = function do
+	let global x = 100
+	invoke a
+	assert x == 101
+end
+
+invoke b
+invoke c

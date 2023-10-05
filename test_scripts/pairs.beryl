@@ -1,0 +1,19 @@
+let obj = struct :foo 1 :bar 2 :char 3
+
+let p = pairs obj
+
+let other-obj = (struct
+	:0 (cat "2023-09-29T20:00" "")
+	:1 (cat "2023-09-30T20:00" "")
+	:2 (cat "2023-10-1T20:00" "")
+)
+
+p = pairs other-obj
+assert (refcount p) == 2
+assert (refcount other-obj) == 2
+assert (refcount (p 0)) == 2
+
+assert (refcount ((p 0) 1)) == 3
+assert (refcount (other-obj :0)) == 3
+other-obj = null
+assert (refcount ((p 0) 1)) == 2

@@ -1,0 +1,14 @@
+let x = "do 1 end"
+
+let y = eval x
+x = 1
+
+assert (invoke y) == 1
+
+x = "with x do " cat: "x + x end"
+let y2 = eval x
+x = 1
+
+assert (y2 10) == 20
+assert (invoke y) == 1
+assert (y2 33) == 66

@@ -1,0 +1,32 @@
+
+let make-random-array = function size range do
+	construct-array size with i do
+		round (new random) * range
+	end
+end
+
+let is-sorted = function a do
+	let sorted = true
+	for 1 (sizeof a) - 1 with i do
+		if (a i - 1) > (a i) do
+			sorted = false
+		end
+	end
+	sorted
+end
+
+assert (is-sorted (array 2 5 78 89 100 100 101 102 5021))
+assert (not (is-sorted (array 4 39 49 320 102340 102339 51 102030012)))
+
+
+for 0 100 with i do
+	let a = make-random-array 100 10000
+	let b = sort a
+	assert (not (is-sorted a)) #Technically not impossible, but unlikely (1/100! probably)
+	assert (is-sorted b)
+	#print "------------------"
+	#print a
+	#print "---------"
+	#print b
+	#print "------------------"
+end

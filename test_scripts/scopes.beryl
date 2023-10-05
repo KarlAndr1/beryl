@@ -1,0 +1,58 @@
+let x = 10
+
+let f1 = function f do
+	let x = 20
+	invoke f
+	assert x == 20
+end
+
+let f2 = function do
+	assert x == 10
+end
+
+f1 f2
+assert x == 10
+
+f1 = function f do
+	let x = 20
+	invoke f
+end
+
+f2 = function do
+	let x = 55
+	let i_f1 = function via pass do
+		x = 13
+		via pass
+	end
+	
+	let i_f2 = function do
+		assert x == 13
+	end
+	
+	i_f1 f1 i_f2
+end
+
+invoke f2
+
+
+let y = 10
+
+let caller = function callback do
+	assert y == 10
+	let y = 20
+	invoke callback
+end
+
+let outer = function do
+	let y = 33
+	let callback = function do
+		assert y == 33
+		y = 0
+	end
+	caller callback
+	assert y == 0
+end
+
+invoke outer
+
+assert y == 10

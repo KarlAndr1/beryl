@@ -1,0 +1,11 @@
+print script-dir
+
+let extern = require "extern.beryl"
+assert extern == 21
+
+let text = require "resource.txt"
+assert (text == ("This is some text" cat: newline)) or? (text == "This is some text")
+
+function do
+	print "Hello world!"
+end

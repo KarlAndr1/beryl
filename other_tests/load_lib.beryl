@@ -1,0 +1,15 @@
+let math = require "~/math.beryl"
+
+print (math :pow 2 8)
+
+let ^ = math :pow
+
+assert 2 ^ 8 == 256
+
+print 2 ^ 0.5
+
+#print math
+
+print (math :deg->rad 180)
+
+print (math :abs -2) (math :abs 0) (math :abs 2)

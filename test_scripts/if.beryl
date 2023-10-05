@@ -1,0 +1,23 @@
+let my-else = new tag
+
+let my-if = function cond then1 else-tag then2 do
+	assert else-tag == my-else
+	if cond do
+		invoke then1
+	end else do
+		invoke then2
+	end
+end
+
+let x = 2
+let y = 3
+
+let expect-cond = false
+
+my-if x == y do
+	assert false
+end my-else do
+	expect-cond = true
+end
+
+assert expect-cond

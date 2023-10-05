@@ -1,0 +1,2 @@
+print argv
+print (sizeof argv)

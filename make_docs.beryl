@@ -1,0 +1,62 @@
+#!/usr/bin/env beryl
+require-version 0
+
+write "env/docs/index.bdoc" (cat "Libraries (access library index by running `docs " quote "[LIBNAME]" quote "):" newline)
+
+for-in argv with f do
+	let lines = split (read f) newline
+	
+	let inside-doc = false
+	let inside-directive = false
+	
+	let docname = "unkown"
+	let libname = "unkown"
+	let line-counter = 0
+	
+	for-in lines with line do
+		if inside-doc do
+			if (strip line) == "@@*/" do
+				inside-doc = false
+				append (cat "env/docs/" libname ".bdoc") (cat tab "-" docname newline)
+			end else do
+				line-counter += 1
+				
+				if line-counter == 1 do
+					docname = strip line
+					let tmp = docname
+					docname = replace docname "?" ""
+					write (cat "env/docs/" docname ".bdoc") (cat tmp " (" libname ")" newline)
+				end else do
+					if (line-counter == 2) and? ((sizeof line) > 0) do
+						append (cat "env/docs/" docname ".bdoc") line cat: newline
+					end elseif line-counter > 2 do
+						if (sizeof line) > 0 do
+							line = substring line 1 (sizeof line)
+						end
+						append (cat "env/docs/" docname ".bdoc") line cat: newline
+					end
+				end
+			end
+		end elseif inside-directive do
+			if (strip line) == "$@*/" do
+				inside-directive = false
+			end else do
+				let coms = split (strip line) " "
+				if (coms 0) == "libname" do
+					libname = coms 1
+					write (cat "env/docs/" libname ".bdoc") (cat libname newline)
+					append "env/docs/index.bdoc" (cat tab "-" libname newline)
+				end
+			end
+		end else do
+			if (strip line) == "/*@@" do
+				inside-doc = true
+				line-counter = 0
+			end elseif (strip line) == "/*@$" do
+				inside-directive = true
+			end
+		end
+	end
+end
+
+run "cp" "env/docs/index.bdoc" "env/docs/help.bdoc"

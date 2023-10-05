@@ -1,0 +1,4 @@
+print "Loaded" script-path
+print "Dir:" script-dir
+
+21

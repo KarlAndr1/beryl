@@ -1,0 +1,22 @@
+let double = function x do
+	x * 2
+end
+
+let d-array = array 0 2 4 6
+
+let d-table = (table
+	0 0
+	1 2
+	2 4
+	3 6
+)
+
+let src = array 0 1 2 3
+
+let r1 = map src double
+let r2 = map src d-array
+let r3 = map src d-table
+
+assert (r1 == r2) and? (r2 == r3)
+
+
