@@ -1,7 +1,7 @@
 # The Beryl programming language
 
 Beryl is a small programming language with value semantics that is largely based off of (and shares some code with) legacy Beryl.
-Like the legacy Beryl it is an embeddable scripting language that executes directly from source code, no parsing or compiling done ahead of time.
+Like legacy Beryl it is an embeddable scripting language that executes directly from source code, no parsing or compiling done ahead of time.
 Most of the core language can run without access to libc or any dynamic allocation functions like malloc.
 
 ## Examples
