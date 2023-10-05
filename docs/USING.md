@@ -16,7 +16,7 @@ A term may be any of the following:
 	-A full expression enclosed in brackets ( )
 	-A do ... end block
 	-An assignment or declaration; "a = b" or "let c = :expression:"
-	-A literal of some kind; 1, 0.5, "a string"
+	-A literal of some kind; 1, 0.5, "a string", :an_inline_string
 	-A variable or constant
 	-A function declaration; function x y do ... end
 
@@ -75,6 +75,8 @@ can be used as a binary operator
 	10 pow^ 3
 it may still be used as a regular function however
 	pow^ 10 3
+Normal functions/variables not ending in operator characters can be used as binary operators by adding a ':' to the end of the name.
+	"hello world!" split: " "
 
 Note the 'for' in the declaration of the pow^ function. It is just a regular function that takes three arguments, in this case 0, y and a function. The for
 function then iterates from 0 until y, calling the given function with the current index at every step.
@@ -144,5 +146,13 @@ The error message would then be passed on to the second function which would the
 value of the entire expression, that gets assigned to the variable 'res'. If no error occurs then the first function would continue after the invocation of
 some-function, printing out "Ok" and then returning x; the result of some-function would then be assigned to 'res'.
 
+## Standard library
 
+If Beryl is installed either locally or globally, the documentation for the standard library can be accessed via the beryl interpreter:
+	docs "index"
+returns a list of all libraries
+	docs "corelib"
+returns a list of documented functions part of "corelib"
+	docs "substring"
+returns the documentation for the "substring" function.
 

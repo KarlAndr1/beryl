@@ -1,33 +1,29 @@
 
 # How to embed the language
-(NOTE: This guide mostly consists of the API guide for Beryl, so some inaccuracies may occur)
+(NOTE: This guide mostly consists of and adapted version of the API guide for legacy Beryl, so some inaccuracies may occur)
 
 Include the "berylscript.h" header and link with the library.
 
 There are mainly two functions for interacting with the interpreter.
 ```
-	beryl_eval(src, src_len, new_scope, err_action)
+	beryl_eval(src, src_len, err_action)
 ```
-The src is the source code; a char pointer, and src_len is the length of that string.
+The *src* is the source code; a char pointer, and *src_len* is the length of that string.
 Note that the source code should remain in memory for as long as the interpreter is used, as the interpreter does
 not copy items such as variable names and string constants, it instead keeps pointers to the source code where they are located.
-The new_scope is a boolean; if true then any variables declared in the top level scope of the given code are put inside a new scope that is
-cleared when the eval function exits. If false then any declared variables are kept in the current scope, and not cleared when the function exits.
-New_scope should only be false when calling the eval function externally, not when inside a function called by a script, as that would place the
-declared global variables into the local scope.
-The err_action enum value decides how the interpreter deals with any errors that reach the top level. If this is BERYL_PROP_ERR then the errors are
+The *err_action* enum value decides how the interpreter deals with any errors that reach the top level. If this is BERYL_PROP_ERR then the errors are
 kept in the buffer, and not cleared or printed. This should only be done by code that is called by a script and intends to propagate the error back to the
 script. BERYL_CATCH_ERR clears all errors, and BERYL_PRINT_ERR prints and then clears errors.
 
-To call functions that are defined in scripts, the beryl_pcall_fn function is used.
+To call functions that are defined in scripts, the beryl_pcall function is used.
 ```
-	beryl_pcall(fn, args, n_args)
+	beryl_pcall(fn, args, n_args, borrow, print_stack_trace)
 ```
-This function clears any errors/stack trace that may have arisen during the function call.
-fn is the function (or array or some other type) to call, args is a pointer to the arguments and n_args the number of arguments.
-Note that this function does not retain or release the given arguments (or the function). It instead expects
-the caller to keep ownership of these for as long as the function runs. That is to say, for example, if the given arguments all have a reference count of
-one, the function will not alter these counts, and the arguments should thus remain in memory as long as no other code decrements them.
+This function clears any errors/stack traces that may have arisen during the function call.
+*fn* is the function (or array or some other type) to call, *args* is a pointer to the arguments and *n_args* the number of arguments.
+The *borrow* argument determines if the function borrows the given arguments and function, or takes ownership of the references. Generally
+this should be *true*. If it is false, the function will automatically release/free its arguments once it's done.
+*print_stack_trace* is a simple toggle that determines if the function prints any error messages and stack traces in case on an error.
 
 If calling a function from a function that was itself called by a beryl script, and intends to propagate any errors that may occur, use the beryl_call function
 instead.
@@ -73,6 +69,3 @@ Then use the beryl_set_var function to set a variable to have this function as i
 	beryl_set_var("my_fn", sizeof("my_fn") - 1, fn, false);
 ```
 The final boolean marks whether the variable is a constant or not.
-Note that the beryl_set_var should generally only be used by code that was not called from a beryl script, since it injects the variable
-into the current scope, even if that scope happens to be the local scope of a function that is currently being called.
-In normal cases beryl_set_var is called before any berylscript code is evaluated/called, in which case it injects the variables into the global scope.
