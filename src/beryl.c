@@ -1690,7 +1690,7 @@ bool beryl_load_included_libs() {
 }
 
 #ifndef BERYL_MINOR_VERSION
-#define BERYL_MINOR_VERSION "8"
+#define BERYL_MINOR_VERSION "9"
 #endif
 
 #ifndef BERYL_MAJOR_VERSION
