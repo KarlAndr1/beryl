@@ -446,7 +446,7 @@ static i_val convert_time_callback(const i_val *args, i_size n_args) {
 	time_t t = beryl_as_num(args[0]);
 	struct tm *time = localtime(&t);
 	
-	i_val time_obj = beryl_new_table(8, true);
+	i_val time_obj = beryl_new_table(9, true);
 	if(BERYL_TYPEOF(time_obj) == TYPE_NULL)
 		return BERYL_ERR("Out of memory");
 	
@@ -458,6 +458,9 @@ static i_val convert_time_callback(const i_val *args, i_size n_args) {
 	beryl_table_insert(&time_obj, BERYL_CONST_STR("year"), BERYL_NUMBER(1900 + time->tm_year), false);
 	beryl_table_insert(&time_obj, BERYL_CONST_STR("day-of-the-year"), BERYL_NUMBER(time->tm_yday), false);
 	beryl_table_insert(&time_obj, BERYL_CONST_STR("daylight-savings"), BERYL_BOOL(time->tm_isdst), false);
+	
+	int weekday = time->tm_wday == 0 ? 6 : time->tm_wday - 1;
+	beryl_table_insert(&time_obj, BERYL_CONST_STR("weekday"), BERYL_NUMBER(weekday), false); 
 	
 	return time_obj;
 }
