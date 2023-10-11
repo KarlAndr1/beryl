@@ -1,7 +1,7 @@
 #ifndef IO_H_INCLUDED
 #define IO_H_INCLUDED
 
-#include "berylscript.h"
+#include "beryl.h"
 #include <stdio.h>
 
 char *load_file(const char *path, size_t *len);

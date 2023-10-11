@@ -1,6 +1,6 @@
 
 
-export LINK_FLAGS += ../../berylscript.dll
+export LINK_FLAGS += ../../beryl.dll
 
 .PHONY: $(dyn_libs)
 $(dyn_libs):

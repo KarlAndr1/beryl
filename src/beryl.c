@@ -1,4 +1,4 @@
-#include "berylscript.h"
+#include "beryl.h"
 #include "lexer.h"
 
 #include "utils.h"

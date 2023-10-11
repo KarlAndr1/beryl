@@ -1,4 +1,4 @@
-#include "berylscript.h"
+#include "beryl.h"
 
 #include <string.h>
 #include <stdio.h>
