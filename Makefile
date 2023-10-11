@@ -9,10 +9,22 @@ opt_libs = src/libs/io_lib.o src/io.o src/libs/unix_lib.o src/libs/debug_lib.o
 
 export mexternal_libs = libs/math
 
-CFLAGS += -std=c99 -Wall -Wextra -Wpedantic
+BERYL_MAJOR_VERSION = 0
+BERYL_SUBMAJOR_VERSION = 0
+BERYL_MINOR_VERSION = 9
+export BERYL_MAJOR_VERSION
+export BERYL_SUBMAJOR_VERSION
+export BERYL_MINOR_VERSION
+
+CFLAGS += -std=c99 -Wall -Wextra -Wpedantic -D BERYL_MAJOR_VERSION=$(BERYL_MAJOR_VERSION) -D BERYL_SUBMAJOR_VERSION=$(BERYL_SUBMAJOR_VERSION) -D BERYL_MINOR_VERSION=$(BERYL_MINOR_VERSION)
 
 release: CFLAGS += -O2
-release: beryl
+release: beryl dynamic-libraries 
+release:
+	./make_docs.awk src/libs/*.c	
+
+deb: release
+	make -C packaging/deb
 
 debug: CFLAGS += -g -fsanitize=address,undefined,leak -DDEBUG
 debug: beryl
@@ -49,12 +61,10 @@ lib: $(core) $(opt_libs)
 minimal-lib: $(core)
 	ar rcs libberyl.a $(core)
 
-install: release dynamic-libraries
-	./make_docs.awk src/libs/*.c
+install: release
 	./install_local.sh
 
-install-global: release dynamic-libraries
-	./make_docs.awk src/libs/*.c
+install-global: release
 	./install_global.sh
 
 install-headers:

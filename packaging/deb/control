@@ -1,0 +1,12 @@
+Package: beryl-lang
+Architecture: amd64
+Section: interpreters
+Priority: optional
+Maintainer: Karl Andersson <kaad22@student.bth.se>
+Version: $BERYL_MAJOR_VERSION.$BERYL_SUBMAJOR_VERSION.$BERYL_MINOR_VERSION-$DEB_RELEASE
+Homepage: https://github.com/KarlAndr1/beryl
+Description: The Beryl scripting language
+  A small embeddable, dynamically typed and scoped, scripting language.
+  The language's main feature is its ability to run without access to libC or any form
+  of dynamic memory management. 
+  This package includes both the standalone interpreter and the library and C header.

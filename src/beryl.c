@@ -1690,29 +1690,32 @@ bool beryl_load_included_libs() {
 }
 
 #ifndef BERYL_MINOR_VERSION
-#define BERYL_MINOR_VERSION "9"
+#define BERYL_MINOR_VERSION 0
 #endif
 
 #ifndef BERYL_MAJOR_VERSION
-#define BERYL_MAJOR_VERSION "0"
+#define BERYL_MAJOR_VERSION 0
 #endif
 
 #ifndef BERYL_SUBMAJOR_VERSION
-#define BERYL_SUBMAJOR_VERSION "0"
+#define BERYL_SUBMAJOR_VERSION 0
 #endif
 
+#define T(x) #x
+#define S(x) T(x)
+
 const char *beryl_minor_version() {
-	return BERYL_MINOR_VERSION;
+	return S(BERYL_MINOR_VERSION);
 }
 
 const char *beryl_submajor_version() {
-	return BERYL_SUBMAJOR_VERSION;
+	return S(BERYL_SUBMAJOR_VERSION);
 }
 
 const char *beryl_major_version() {
-	return BERYL_MAJOR_VERSION;
+	return S(BERYL_MAJOR_VERSION);
 }
 
 const char *beryl_version() {
-	return BERYL_MAJOR_VERSION ":" BERYL_SUBMAJOR_VERSION ":" BERYL_MINOR_VERSION;
+	return S(BERYL_MAJOR_VERSION) ":" S(BERYL_SUBMAJOR_VERSION) ":" S(BERYL_MINOR_VERSION);
 }
