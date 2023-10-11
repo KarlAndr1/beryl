@@ -7,6 +7,6 @@ Version: $BERYL_MAJOR_VERSION.$BERYL_SUBMAJOR_VERSION.$BERYL_MINOR_VERSION-$DEB_
 Homepage: https://github.com/KarlAndr1/beryl
 Description: The Beryl scripting language
   A small embeddable, dynamically typed and scoped, scripting language.
-  The language's main feature is its ability to run without access to libC or any form
+  The language's main feature is its ability to be shaved down to run without access to libc or any form
   of dynamic memory management. 
-  This package includes both the standalone interpreter and the library and C header.
+  This package includes both the standalone interpreter and the library and C header, with the beryl standard library included.
