@@ -21,10 +21,10 @@ release: beryl dynamic-libraries
 release:
 	./make_docs.awk src/libs/*.c	
 
-deb: release
+deb: release lib
 	make -C packaging/deb
 
-windows-pkg: windows
+windows-pkg: windows lib
 	make -C packaging/windows
 
 debug: CFLAGS += -g -fsanitize=address,undefined,leak -DDEBUG
@@ -75,6 +75,7 @@ clean:
 	echo $(dyn_libs)
 	rm -f $(core) $(opt_libs) src/main.o
 	rm -f ./beryl
+	rm -f ./libberyl.a
 	rm -f ./beryl.exe
 	rm -f ./beryl.dll
 	rm -f ./*.js

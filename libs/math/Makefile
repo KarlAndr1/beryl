@@ -8,5 +8,5 @@ math.beryldl: $(objs)
 $(objs):
 
 clean:
-	rm ./*.o
-	rm ./*.beryldl
+	rm -f ./*.o
+	rm -f ./*.beryldl
