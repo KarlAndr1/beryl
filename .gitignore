@@ -1,6 +1,6 @@
 *.pyc
 *.out
-*.ar
+*.a
 *.o
 *.so.beryl
 beryl

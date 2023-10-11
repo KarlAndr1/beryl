@@ -44,10 +44,10 @@ windows: src/main.o $(core) $(opt_libs)
 	#./berylscript.exe ./make_docs.beryl
 
 lib: $(core) $(opt_libs)
-	ar rcs libBeryl.ar $(core) $(opt_libs) 
+	ar rcs libberyl.a $(core) $(opt_libs) 
 
 minimal-lib: $(core)
-	ar rcs libBeryl.ar $(core)
+	ar rcs libberyl.a $(core)
 
 install: release dynamic-libraries
 	./make_docs.awk src/libs/*.c

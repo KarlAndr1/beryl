@@ -90,7 +90,10 @@ The language is written in C99 and is easy to embedd:
 #include <assert.h>
 
 // -------------------
-
+	
+	beryl_load_included_libraries();
+	// beryl_set_mem(malloc, free, realloc) // Only needed for dynamic allocation, like `array 1 2 3`
+	
 	const char *prog = 
 		"let sum = 0\n"
 		"for 1 11 with i do \n"
