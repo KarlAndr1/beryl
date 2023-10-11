@@ -24,6 +24,9 @@ release:
 deb: release
 	make -C packaging/deb
 
+windows-pkg: windows
+	make -C packaging/windows
+
 debug: CFLAGS += -g -fsanitize=address,undefined,leak -DDEBUG
 debug: beryl
 
@@ -51,7 +54,7 @@ windows: src/main.o $(core) $(opt_libs)
 	$(CC) -shared $(core) $(opt_libs) -oberyl.dll $(CFLAGS)
 	$(CC) src/main.o beryl.dll $(CFLAGS) -oberyl.exe
 	$(MAKE) -f libs/MakeWinDLLs
-	#./berylscript.exe ./make_docs.beryl
+	./make_docs.awk src/libs/*.c	
 
 lib: $(core) $(opt_libs)
 	ar rcs libberyl.a $(core) $(opt_libs) 

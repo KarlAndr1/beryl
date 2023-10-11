@@ -5,4 +5,5 @@ export LINK_FLAGS += ../../beryl.dll
 .PHONY: $(dyn_libs)
 $(dyn_libs):
 	$(MAKE) -C $@
+	cp -t env/libs $@/*.beryldl $@/*.beryl
 

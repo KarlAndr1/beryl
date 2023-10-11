@@ -1361,7 +1361,7 @@ static i_val find_right_callback(const i_val *args, i_size n_args) {
 }
 
 /*@@
-	endswith
+	endswith?
 	string substring
 
 	Returns true if *string* ends with *substring*, false if it does not.
