@@ -9,9 +9,7 @@ opt_libs = src/libs/io_lib.o src/io.o src/libs/unix_lib.o src/libs/debug_lib.o
 
 export mexternal_libs = libs/math
 
-BERYL_MAJOR_VERSION = 0
-BERYL_SUBMAJOR_VERSION = 0
-BERYL_MINOR_VERSION = 9
+include build.config
 export BERYL_MAJOR_VERSION
 export BERYL_SUBMAJOR_VERSION
 export BERYL_MINOR_VERSION
@@ -37,7 +35,7 @@ test: debug
 run: debug
 	./beryl
 
-export dyn_libs = libs/math
+export dyn_libs = $(wildcard libs/*/)
 
 .PHONY: $(dyn_libs)
 $(dyn_libs):
@@ -71,6 +69,7 @@ install-headers:
 	cp src/beryl.h /usr/local/include/beryl.h
 
 clean:
+	echo $(dyn_libs)
 	rm -f $(core) $(opt_libs) src/main.o
 	rm -f ./beryl
 	rm -f ./beryl.exe
@@ -78,7 +77,8 @@ clean:
 	rm -f ./*.js
 	rm -f ./*.html
 	rm -f ./*.wasm
-	rm env/docs/*.bdoc
-	rm env/libs/*.beryl env/libs/*.beryldl
+	rm -f env/docs/*.bdoc
+	rm -f env/libs/*.beryl env/libs/*.beryldl
+	for l in $(dyn_libs); do make -C $$l clean; done
 
 $(core) $(opt_libs) src/main.o:
