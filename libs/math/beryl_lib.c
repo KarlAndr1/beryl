@@ -5,6 +5,8 @@
 #define PI 3.14159265359
 
 static struct i_val pow_callback(const struct i_val *args, i_size n_args) {
+	(void) n_args;
+	
 	if(BERYL_TYPEOF(args[0]) != TYPE_NUMBER) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected number as first argument for 'pow'");
@@ -20,6 +22,7 @@ static struct i_val pow_callback(const struct i_val *args, i_size n_args) {
 
 #define UNARY_OP(name, fn) \
 static struct i_val name##_callback(const struct i_val *args, i_size n_args) { \
+	(void) n_args; \
 	if(BERYL_TYPEOF(args[0]) != TYPE_NUMBER) { \
 		beryl_blame_arg(args[0]); \
 		return BERYL_ERR("Expected number as first argument for '" #name "'"); \
@@ -44,6 +47,7 @@ UNARY_OP(acos, acos)
 UNARY_OP(atan, atan)
 
 static struct i_val deg_to_rad_callback(const struct i_val *args, i_size n_args) {
+	(void) n_args;
 	if(BERYL_TYPEOF(args[0]) != TYPE_NUMBER) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected number as first argument for 'deg->rad'");
@@ -54,6 +58,7 @@ static struct i_val deg_to_rad_callback(const struct i_val *args, i_size n_args)
 }
 
 static struct i_val rad_to_deg_callback(const struct i_val *args, i_size n_args) {
+	(void) n_args;
 	if(BERYL_TYPEOF(args[0]) != TYPE_NUMBER) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected number as first argument for 'rad->deg'");
@@ -64,6 +69,7 @@ static struct i_val rad_to_deg_callback(const struct i_val *args, i_size n_args)
 }
 
 static struct i_val dot_callback(const struct i_val *args, i_size n_args) {
+	(void) n_args;
 	if(BERYL_TYPEOF(args[0]) != TYPE_ARRAY) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected array as first argument for 'dot', got %0");
@@ -80,19 +86,6 @@ static struct i_val dot_callback(const struct i_val *args, i_size n_args) {
 		return BERYL_ERR("Can only take the dot product of arrays of equal length (got %0 and %1)");
 	}
 	
-	/*
-	struct i_val res;
-	if(beryl_get_refcount(args[0]) == 1)
-		res = beryl_retain(args[0]);
-	else if(beryl_get_refcount(args[1]) == 1)
-		res = beryl_retain(args[1]);
-	else {
-		res = beryl_new_array(len, NULL, len, false);
-		if(BERYL_TYPEOF(res) == TYPE_NULL)
-			return BERYL_ERR("Out of memory");
-	}
-	
-	i_val *to = (i_val *) beryl_get_raw_array(res); */
 	i_float res = 0;
 	
 	const struct i_val *a_a = beryl_get_raw_array(args[0]);
@@ -137,7 +130,7 @@ static void init_lib() {
 	
 	#define CONST(name, val) { name, sizeof(name) - 1, val }
 	static struct { const char *name; size_t name_len; struct i_val val; } consts[] = {
-		CONST("pi", BERYL_NUMBER(PI))
+		CONST("pi", BERYL_SNUMBER(PI))
 	};
 	
 	struct i_val table = beryl_new_table(LENOF(fns) + LENOF(consts), true);

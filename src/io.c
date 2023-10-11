@@ -46,7 +46,7 @@ void print_i_val(FILE *f, struct i_val val) {
 			
 		case TYPE_NUMBER: {
 			i_float num = beryl_as_num(val);
-			if(beryl_is_integer(val) && num <= LLONG_MAX && num >= LLONG_MIN)
+			if(beryl_is_integer(val) && num <= (i_float) LLONG_MAX && num >= (i_float) LLONG_MIN)
 				fprintf(f, "%lli", (long long int) num);
 			else
 				fprintf(f, "%f", num);

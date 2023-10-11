@@ -160,7 +160,7 @@ static i_val print_exactly_callback(const i_val *args, i_size n_args) {
 	return BERYL_NULL;
 }
 
-static i_val read_all_tag = BERYL_NULL;
+static i_val read_all_tag = BERYL_SNULL;
 
 /*@@
 	input

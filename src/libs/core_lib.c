@@ -10,77 +10,6 @@ $@*/
 
 typedef struct i_val i_val;
 
-/*
-//The op functions take ownership of the value(s) passed, i.e it calls release() on them when done
-static i_val add_op(i_val a, i_val b) {
-	i_val res;
-
-	switch(BERYL_TYPEOF(a)) {
-		case TYPE_NUMBER:
-			if(BERYL_TYPEOF(b) != TYPE_NUMBER) {
-				beryl_blame_arg(b);
-				res = BERYL_ERR("Can only add numbers to numbers (got '%0')");
-				goto EXIT;
-			}
-			res = BERYL_NUMBER(beryl_as_num(a) + beryl_as_num(b));
-			goto EXIT;
-		
-		case TYPE_ARRAY: {
-			if(BERYL_TYPEOF(b) != TYPE_ARRAY) {
-				beryl_blame_arg(b);
-				res = BERYL_ERR("Can only add arrays to arrays (got '%0'");
-				goto EXIT;
-			}
-			i_size len = BERYL_LENOF(a);
-			if(BERYL_LENOF(b) != len) {
-				beryl_blame_arg(a);
-				beryl_blame_arg(b);
-				res = BERYL_ERR("Can only add arrays of equal lengths (got %0 and %1)");
-				goto EXIT;
-			}
-				
-			if(beryl_get_refcount(a) == 1)
-				res = beryl_retain(a);
-			else {
-				res = beryl_new_array(len, beryl_get_raw_array(a), len, false);
-				if(BERYL_TYPEOF(res) == TYPE_NULL) {
-					res = BERYL_ERR("Out of memory");
-					goto EXIT;
-				}
-			}
-			//assert(beryl_get_refcount(res) == 1);
-			
-			i_val *to = (i_val *) beryl_get_raw_array(res);
-			const i_val *a_b = beryl_get_raw_array(b);
-			for(i_size i = 0; i < len; i++) {
-				if(BERYL_TYPEOF(to[i]) != TYPE_NUMBER || BERYL_TYPEOF(a_b[i]) != TYPE_NUMBER) {
-					beryl_release(res);
-					beryl_blame_arg(a);
-					beryl_blame_arg(b);
-					res = BERYL_ERR("Can only add arrays consisting entirely of numbers");
-					goto EXIT;
-				}
-				to[i] = BERYL_NUMBER(beryl_as_num(to[i]) + beryl_as_num(a_b[i]));
-			}
-			
-			goto EXIT;
-		}
-		
-		default:
-			beryl_blame_arg(a);
-			res = BERYL_ERR("Cannot use + operator on '%0'");
-			goto EXIT;
-	}
-	
-	EXIT:
-	beryl_release(a);
-	beryl_release(b);
-	return res;
-}
-
-static i_val mul_op(i_val a, i_val b) {
-
-} */
 
 #define FN(arity, name, fn) { arity, true, name, sizeof(name) - 1, fn }
 #define MANUAL_RELEASE_FN(arity, name, fn) { arity, false, name, sizeof(name) - 1, fn }
@@ -104,22 +33,7 @@ static i_val name(const i_val *args, i_size n_args) { \
 	return BERYL_NUMBER(res); \
 }
 
-MATH_OP(add_callback, 0, 0, +) /*
-static i_val add_callback(const i_val *args, i_size n_args) {
-	i_val carry = args[0];
-	for(i_size i = 1; i < n_args; i++) {
-		i_val res = add_op(carry, args[i]);
-		if(BERYL_TYPEOF(res) == TYPE_ERR) {
-			for(i_size j = i + 1; j < n_args; j++)
-				beryl_release(args[j]);
-			return res;
-		}
-		carry = res;
-	}
-	
-	return carry;
-} */
-
+MATH_OP(add_callback, 0, 0, +)
 MATH_OP(mul_callback, 1, 0, *)
 MATH_OP(div_callback, beryl_as_num(args[0]), 1, /)
 
@@ -1068,7 +982,7 @@ static i_val mod_callback(const i_val *args, i_size n_args) {
 
 
 
-static i_val arrayof_array = BERYL_NULL;
+static i_val arrayof_array = BERYL_SNULL;
 
 static i_val arrayof_capture_callback(const i_val *args, i_size n_args) {
 	if(BERYL_TYPEOF(arrayof_array) == TYPE_NULL)
@@ -1730,7 +1644,7 @@ static i_val num_to_str(i_float num) {
 			return BERYL_CONST_STR("infinity");
 	}
 	
-	if(num > LARGE_UINT_TYPE_MAX) {
+	if(num > (i_float) LARGE_UINT_TYPE_MAX) {
 		i_float	significand;
 		size_t exp = iflog10(num, &significand);
 		size_t n_sig_digits = 4;
@@ -2145,7 +2059,8 @@ static i_val slice_callback(const i_val *args, i_size n_args) {
 		TYPE_ARRAY, "array",
 		TYPE_NUMBER, "number",
 		TYPE_NUMBER, "number"
-	); (void) n_args;
+	); 
+	(void) n_args;
 	
 	if(!beryl_is_integer(args[1])) {
 		beryl_blame_arg(args[1]);
@@ -2193,6 +2108,8 @@ static i_val slice_callback(const i_val *args, i_size n_args) {
 	Returns an error if out of memory or if *array* is empty.
 @@*/
 static i_val pop_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE1(TYPE_ARRAY, "array"); (void) n_args;
 	
 	if(BERYL_LENOF(args[0]) == 0) {
@@ -2210,6 +2127,8 @@ static i_val pop_callback(const i_val *args, i_size n_args) {
 	Returns an error if *array* is empty.
 @@*/
 static i_val peek_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE1(TYPE_ARRAY, "array"); (void) n_args;
 	
 	i_size len = BERYL_LENOF(args[0]);
@@ -2227,6 +2146,8 @@ static i_val peek_callback(const i_val *args, i_size n_args) {
 	Returns the result of calling *fn*.
 @@*/
 static i_val apply_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	if(BERYL_TYPEOF(args[1]) != TYPE_ARRAY) {
 		beryl_blame_arg(args[1]);
 		return BERYL_ERR("Can only apply arrays to functions");
@@ -2244,6 +2165,8 @@ static i_val apply_callback(const i_val *args, i_size n_args) {
 	Returns an error if out of memory.
 @@*/
 static i_val join_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE2(
 		TYPE_ARRAY, "array",
 		TYPE_ARRAY, "array"
@@ -2289,6 +2212,8 @@ static i_val join_callback(const i_val *args, i_size n_args) {
 	'b' in this case will be the array (2 4 6)
 @@*/
 static i_val map_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	if(BERYL_TYPEOF(args[0]) != TYPE_ARRAY) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Can only 'map' arrays");
@@ -2368,6 +2293,8 @@ static i_val forevery_callback(const i_val *args, i_size n_args) { // DOESN'T US
 	Returns an error if out of memory.
 @@*/
 static i_val strip_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE1(
 		TYPE_STR, "string"
 	);
@@ -2408,6 +2335,8 @@ static i_val strip_callback(const i_val *args, i_size n_args) {
 	Returns the array ("1" "2" "" "3" "")
 @@*/
 static i_val split_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE2(
 		TYPE_STR, "string",
 		TYPE_STR, "string"
@@ -2511,6 +2440,7 @@ static i_val split_callback(const i_val *args, i_size n_args) {
 }
 
 static i_val identity_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
 	return beryl_retain(args[0]);
 }
 
@@ -2532,6 +2462,8 @@ static i_val identity_callback(const i_val *args, i_size n_args) {
 		object
 @@*/
 static i_val typeof_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	switch(BERYL_TYPEOF(args[0])) {
 	
 		case TYPE_NUMBER:
@@ -2580,6 +2512,8 @@ static i_val typeof_callback(const i_val *args, i_size n_args) {
 		assert s == "1-2-3"
 @@*/
 static i_val join_with_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE2(
 		TYPE_ARRAY, "array",
 		TYPE_STR, "string"
@@ -2648,6 +2582,8 @@ static i_val join_with_callback(const i_val *args, i_size n_args) {
 	May return an error on out of memory.
 @@*/
 static i_val repeat_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE2(
 		TYPE_STR, "string",
 		TYPE_NUMBER, "number"
@@ -2724,6 +2660,8 @@ static i_val max_callback(const i_val *args, i_size n_args) {
 		assert i == 1
 @@*/
 static i_val find_in_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	if(BERYL_TYPEOF(args[0]) != TYPE_ARRAY) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected array as first argument for 'find-in'");
@@ -2740,6 +2678,8 @@ static i_val find_in_callback(const i_val *args, i_size n_args) {
 }
 
 static i_val floor_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE1(
 		TYPE_NUMBER, "number"
 	);
@@ -2751,6 +2691,8 @@ static i_val floor_callback(const i_val *args, i_size n_args) {
 }
 
 static i_val ceil_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+
 	EXPECT_TYPE1(
 		TYPE_NUMBER, "number"
 	);
@@ -2765,6 +2707,7 @@ static i_val ceil_callback(const i_val *args, i_size n_args) {
 }
 
 static i_val first_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
 	if(BERYL_TYPEOF(args[0]) != TYPE_ARRAY) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected array as first argument");
@@ -2794,6 +2737,7 @@ static i_val exists_callback(const i_val *args, i_size n_args) {
 }
 
 static i_val all_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
 	if(BERYL_TYPEOF(args[0]) != TYPE_ARRAY) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Expected array as first argument");

@@ -10,7 +10,7 @@
 		#define static_assert(x, y) _Static_assert(x, y)
 	#endif
 #else
-	#define assert(x) (void) 0
+	#define assert(x) (void) (x)
 	#define static_assert(x, y)
 #endif
 

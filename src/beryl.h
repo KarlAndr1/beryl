@@ -111,7 +111,9 @@ struct beryl_object {
 };
 
 #define BERYL_NULL ((struct i_val) { .type = TYPE_NULL } )
+#define BERYL_SNULL { .type = TYPE_NULL }
 #define BERYL_NUMBER(f) ((struct i_val) { .type = TYPE_NUMBER, .val.num_v = f } )
+#define BERYL_SNUMBER(f) { .type = TYPE_NUMBER, .val.num_v = f }
 #define BERYL_BOOL(b) ((struct i_val) { .type = TYPE_BOOL, .val.bool_v = b } )
 #define BERYL_TRUE BERYL_BOOL(true)
 #define BERYL_FALSE BERYL_BOOL(false)

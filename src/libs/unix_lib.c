@@ -92,7 +92,7 @@ static i_val load_dl_callback(const i_val *args, i_size n_args) {
 		beryl_blame_arg(args[0]);
 		return BERYL_ERR("Not a BerylScript library");
 	}
-	i_val (*lib_load_fn_ptr)() = lib_load;
+	i_val (*lib_load_fn_ptr)() = (i_val (*)()) lib_load;
 	
 	return lib_load_fn_ptr();
 }
@@ -169,7 +169,10 @@ static int p_spawn(const char *cmd, char **argv, int *return_code, const i_val *
 		close(host_to_sub[0]);
 		if(pass != NULL) {
 			assert(BERYL_TYPEOF(*pass) == TYPE_STR);
-			write(host_to_sub[1], beryl_get_raw_str(pass), BERYL_LENOF(*pass));
+			ssize_t n = write(host_to_sub[1], beryl_get_raw_str(pass), BERYL_LENOF(*pass));
+			if(n == -1) {
+				//An error occured when writing to the subprocess... what do we do here exactly?				
+			}
 		}
 		close(host_to_sub[1]);
 		
@@ -334,7 +337,7 @@ static i_val random_i_string(i_size len) {
 	return str_val;
 	
 	#else
-	
+	(void) len;
 	return BERYL_ERR("'rands' is not supported on this platform");
 	
 	#endif
