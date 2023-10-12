@@ -16,7 +16,21 @@ let contains? = function str substr do
 	(str find: substr) =/= null
 end
 
+let split-path = function path do
+	let sep-index = find-right path path-separator
+	if sep-index == null do
+		(array "." path)
+	end else do
+		(array 
+			(substring path 0 sep-index)
+			(substring path sep-index + 1 (sizeof path))
+		)
+	end
+end
+
 let require = function path do
+	path str-replace= "/" path-separator
+	
 	path str-replace= "~" (cat (getenv "BERYL_SCRIPT_HOME") path-separator "libs")
 	if (not path beginswith? path-separator) do
 		path = cat script-dir path-separator path
@@ -27,12 +41,9 @@ let require = function path do
 	end else do
 		let global script-path = path
 		
-		# We need to get the directory portion of the path ie foo/bar from foo/bar/char. This path should always contain at least one /
-		let sep-index = find-right path path-separator
-		assert sep-index =/= null
-		
-		let global script-dir = substring path 0 sep-index
-		let script-file-name = substring path sep-index + 1 (sizeof path)
+		let path-info = split-path path
+		let global script-dir = path-info 0
+		let script-file-name = path-info 1
 
 		if (not script-file-name contains? ".") do
 			let icode-path = path cat: ".beryl"
@@ -72,6 +83,12 @@ let docs = function name do
 	end else "No documentation found"
 end
 
+let profile-script = (cat (getenv "HOME") path-separator ".beryl_profile")
+if (file-exists? profile-script) do
+	let global script-path = profile-script
+	let global script-dir = (split-path profile-script) 0
+	eval (read profile-script)
+end
 
 if (sizeof argv) == 0 do # Prompt
 	let continue = true
@@ -99,14 +116,7 @@ if (sizeof argv) == 0 do # Prompt
 	end
 end else do # Run script
 	let global script-path = argv 0 # Set up script-path and script-dir
-	let global script-dir = null
-
-	let sep-index = script-path find-right: path-separator
-	if sep-index == null do # If the script executed is given by a relative path containing no / then it means its in the current directory, i.e '.'
-		script-dir = "." 
-	end else do
-		script-dir = substring script-path 0 sep-index
-	end
+	let global script-dir = (split-path script-path) 0 # Get the directory
 	
 	let global argv = slice argv 1 (sizeof argv)
 	
