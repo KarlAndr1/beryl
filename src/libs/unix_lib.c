@@ -613,8 +613,6 @@ static i_val regex_callback(const i_val *args, i_size n_args) {
 	
 	#undef MAX_MATCH
 	
-	beryl_tfree(buff);
-	
 	#else
 	
 	return BERYL_ERR("'regex' is not supported on this platform");
