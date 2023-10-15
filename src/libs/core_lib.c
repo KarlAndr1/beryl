@@ -2649,6 +2649,29 @@ static i_val max_callback(const i_val *args, i_size n_args) {
 }
 
 /*@@
+	min
+	... values
+	Variadic function taking at least one argument.
+
+	Returns the smallest value among *values*.
+	Returns an error if some values are incomparable.
+@@*/
+static i_val min_callback(const i_val *args, i_size n_args) {
+	i_val min = args[0];
+	for(i_size i = 1; i < n_args; i++) {
+		int cmp = beryl_val_cmp(args[i], min);
+		if(cmp == 2) {
+			beryl_blame_arg(min); beryl_blame_arg(args[i]);
+			return BERYL_ERR("Uncomparable values");
+		}
+		if(cmp == 1)
+			min = args[i];
+	}
+	
+	return beryl_retain(min);
+}
+
+/*@@
 	find-in
 	array item
 
@@ -2882,6 +2905,7 @@ bool load_core_lib() {
 		FN(2, "repeat", repeat_callback),
 		
 		FN(-2, "max", max_callback),
+		FN(-2, "min", min_callback),
 		
 		FN(2, "find-in", find_in_callback),
 		
