@@ -78,7 +78,12 @@ static unsigned char get_special_char(char c) {
 		//	return TOK_DOT;
 		case ';':
 			return TOK_ENDLINE;
-
+		
+		case '{':
+			return TOK_DO;
+		case '}':
+			return TOK_END;
+		
 		default:
 			return TOK_NULL;
 	}
