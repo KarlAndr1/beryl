@@ -2782,6 +2782,30 @@ static i_val all_callback(const i_val *args, i_size n_args) {
 	return BERYL_TRUE;
 }
 
+static i_val is_valid_identifier_callback(const i_val *args, i_size n_args) {
+	(void) n_args;
+	
+	EXPECT_TYPE1(
+		TYPE_STR, "string"
+	);
+	
+	const char *str = beryl_get_raw_str(&args[0]);
+	i_size len = BERYL_LENOF(args[0]);
+	
+	while(len--) {
+		char c = *str;
+		
+		if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9')) {
+		
+		} else
+			return BERYL_FALSE;
+		
+		str++;
+	}
+	
+	return BERYL_TRUE;
+}
+
 static size_t istrlen(const char *str) {
 	size_t l = 0;
 	while(*str != '\0') {
@@ -2914,7 +2938,9 @@ bool load_core_lib() {
 		
 		FN(2, "first", first_callback),
 		FN(2, "exists", exists_callback),
-		FN(2, "all", all_callback)
+		FN(2, "all", all_callback),
+		
+		FN(1, "is-valid-identifier", is_valid_identifier_callback)
 	};
 	
 	else_tag = beryl_new_tag();
